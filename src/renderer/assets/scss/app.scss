@@ -1,0 +1,129 @@
+#app {
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+.wrapper {
+  display: flex;
+  height: 100%;
+}
+
+@keyframes working {
+  0% { background-color: darken($blue, 20); }
+  50% { background-color: darken($blue, 22); }
+  100% { background-color: darken($blue, 20); }
+}
+
+.main-sidebar {
+  width: $sidebar-width;
+  position: fixed;
+  top: $navbar-height;
+  left: 0;
+  bottom: 0;
+  transition: width 300ms ease-in-out;
+  z-index: 1;
+  background-color: darken($blue, 10);
+
+  .nav-sidebar {
+    white-space: nowrap;
+    clear: both;
+    overflow: hidden;
+
+    .nav-item {
+      .nav-link {
+        padding-top: 18px;
+        padding-bottom: 18px;
+        transition: background-color 300ms ease-in-out, color 300ms ease-in-out;
+
+        &.active {
+          background-color: darken($blue, 20);
+        }
+
+        &.disabled {
+          color: lighten($blue, 0.08);
+        }
+      }
+
+      &.working {
+        .nav-link {
+          animation-name: working;
+          animation-duration: 3s;
+          animation-iteration-count: infinite;
+        }
+      }
+    }
+
+    .fa-icon {
+      width: 30px;
+    }
+
+    a {
+      color: #fff;
+    }
+
+    &.about {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+  }
+
+  .item-name {
+    opacity: 0;
+    transform: translate3d(-20px, 0, 0);
+    transition: transform 300ms ease-in-out, opacity 300ms ease-in-out;
+  }
+
+  &.expand {
+    width: $sidebar-width-expanded;
+
+    .item-name {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      display: inline-block;
+    }
+  }
+}
+
+.main-navbar {
+  -webkit-app-region: drag; // move window
+  padding: 0;
+
+  .btn {
+    -webkit-app-region: no-drag;
+  }
+
+  .btn-toggle-sidebar {
+    width: $sidebar-width;
+  }
+}
+
+.secondary-wrapper {
+  margin-left: $sidebar-width-expanded;
+  padding-bottom: $navbar-height;
+  transition: margin-left 300ms ease-in-out;
+  z-index: 2;
+  background-color: #fff;
+  flex: 1;
+  overflow-y: auto;
+
+  &.expand {
+    margin-left: $sidebar-width !important;
+  }
+}
+
+.fa-icon {
+  width: auto;
+  height: 1.3rem;
+  vertical-align: middle;
+
+  // You would have to include the following two lines to make this work in Safari
+  max-width: 100%;
+  max-height: 100%;
+
+  &.sm {
+    height: 1rem;
+  }
+}
