@@ -25,10 +25,6 @@
             </b-button>
           </b-input-group-append>
         </b-input-group>
-
-        <b-form-invalid-feedback v-show="form.urlValid === false">
-          Invalid URL!
-        </b-form-invalid-feedback>
       </b-form>
 
       <b-list-group class="mt-3">
@@ -66,6 +62,7 @@
 import { mapGetters, mapActions } from 'vuex';
 import VueSimpleSpinner from 'vue-simple-spinner';
 import { getHostName } from '@/utils';
+import log from 'electron-log';
 
 export default {
   data() {
@@ -112,6 +109,8 @@ export default {
         console.error(error);
         this.form.checking = false;
         this.form.urlValid = false;
+
+        log.error(`Error while adding a site: ${error.type}:${error.name}. Line: ${error.lineno}. Message: ${error.message}. Stack: ${error.stack}`);
       });
     },
   },
