@@ -5,6 +5,7 @@ import store from './store';
 
 // plugins
 import './plugins/icons';
+import './plugins/log';
 import './plugins/bootstrap-vue';
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'));
