@@ -54,11 +54,14 @@
         </div>
       </div>
     </div>
+
+    <unhandle-exception />
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import UnhandleException from '@/components/UnhandleException';
 const { app } = require('electron').remote;
 
 export default {
@@ -90,6 +93,9 @@ export default {
       'expandSideBar',
     ]),
   },
+  components: {
+    UnhandleException,
+  },
 };
 </script>
 
@@ -119,6 +125,7 @@ export default {
 @import "../../node_modules/bootstrap/scss/media.scss";
 @import "../../node_modules/bootstrap/scss/list-group.scss";
 @import "../../node_modules/bootstrap/scss/close.scss";
+@import "../../node_modules/bootstrap/scss/modal.scss";
 @import "../../node_modules/bootstrap/scss/tooltip.scss";
 @import "../../node_modules/bootstrap/scss/utilities.scss";
 @import "../../node_modules/bootstrap/scss/print.scss";
