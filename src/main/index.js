@@ -1,4 +1,9 @@
 import { app, BrowserWindow } from 'electron'; // eslint-disable-line
+import log from 'electron-log';
+
+// transport config is available only inside the main process.
+log.transports.console.level = 'info';
+log.transports.file.level = 'info';
 
 /**
  * Set `__static` path to static files in production
