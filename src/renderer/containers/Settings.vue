@@ -9,7 +9,7 @@
       <b-form class="bg-light">
         <b-input-group>
           <b-form-input id="inputUrl"
-                        type="email"
+                        type="text"
                         v-model="form.url"
                         @input="onInput"
                         required
