@@ -2,6 +2,7 @@ import { parsePrice, getCurrency, getHostName } from '@/utils';
 import { getPreference } from '@/preferences';
 import puppeteer from 'puppeteer';
 import moment from 'moment';
+import browser from '@/browser';
 
 /* eslint import/prefer-default-export: 0 */
 /* eslint no-restricted-syntax: 0 */
@@ -35,11 +36,14 @@ export default async function (url = '', productSearch = '') {
       detailPage: false,
     };
 
+    const executablePath = await browser();
+
     puppeteer.launch({
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
       headless: true,
       timeout: 60000,
       slowMo: 100,
+      executablePath,
     }).then(async (browser) => {
       const page = await browser.newPage();
       await page.setViewport({
