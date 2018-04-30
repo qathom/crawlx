@@ -6,7 +6,7 @@
           <icon name="bars" />
         </b-button>
         <b-navbar-brand class="pt-2">
-          <img src="./assets/icons/icon-reversed.svg" width="80" alt="Icon">
+          <img src="./assets/icons/icon-reversed.svg" width="90" alt="Icon">
         </b-navbar-brand>
         
         <b-button
