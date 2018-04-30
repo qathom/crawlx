@@ -1,6 +1,8 @@
 import { getISOCountry, getHostName } from '@/utils';
 import { storeConfig, setPreference, getPreference } from '@/preferences';
 import puppeteer from 'puppeteer';
+import log from 'electron-log';
+import browser from '@/browser';
 
 const state = {};
 const getters = {};
@@ -42,14 +44,25 @@ const actions = {
     commit('EDIT_RESELLER', reseller);
   },
   addSite({ commit }, url = '') {
+    log.info('add site');
     return new Promise(async (resolve, reject) => {
+      const executablePath = await browser();
+
+      log.info(`trying to launch browser with executable path: ${executablePath}`);
+
       puppeteer.launch({
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        headless: true,
+        executablePath,
       }).then(async (browser) => {
+        log.info('creating browser instance');
+
         const page = await browser.newPage();
         await page.goto(url, {
           waitUntil: ['networkidle2'],
         });
+
+        log.info('find info on home page');
 
         const elTitle = await page.$('input[name="field-keywords"]');
         const elCountry = await page.$('#icp-touch-link-country .icp-color-base');
@@ -79,6 +92,8 @@ const actions = {
           hostName,
           isoCountry: countryText,
         };
+
+        log.info('add site in settings');
 
         commit('ADD_SITE', newSite);
 
