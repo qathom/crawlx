@@ -224,7 +224,7 @@ export default {
       dialog.showMessageBox({
         type: 'info',
         title: 'File saved',
-        message: `Path: ${path}`,
+        message: `File path: ${path}`,
         buttons: ['OK'],
       });
     },
