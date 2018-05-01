@@ -54,15 +54,12 @@
         </div>
       </div>
     </div>
-
-    <unhandle-exception />
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
-import UnhandleException from '@/components/UnhandleException';
-const { app } = require('electron').remote;
+const { app, dialog } = require('electron').remote;
 
 export default {
   name: 'app',
@@ -71,10 +68,23 @@ export default {
       jobInProgress: false,
     };
   },
+  created() {
+    window.addEventListener('error', this.onError);
+  },
   methods: {
     ...mapActions([
       'setExpandSidebar',
     ]),
+    onError(event) {
+      const error = `${event.type}, line: ${event.lineno}, message: ${event.message}`;
+
+      dialog.showMessageBox({
+        type: 'error',
+        title: 'An error occured',
+        message: error,
+        buttons: ['OK'],
+      });
+    },
     quit() {
       app.quit();
     },
@@ -92,9 +102,6 @@ export default {
     ...mapGetters([
       'expandSideBar',
     ]),
-  },
-  components: {
-    UnhandleException,
   },
 };
 </script>
