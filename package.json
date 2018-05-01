@@ -23,7 +23,7 @@
   },
   "build": {
     "productName": "crawlx",
-    "appId": "org.simulatedgreg.electron-vue",
+    "appId": "com.qathom.crawlx",
     "directories": {
       "output": "build"
     },
