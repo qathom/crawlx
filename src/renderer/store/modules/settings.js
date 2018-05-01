@@ -46,15 +46,11 @@ const actions = {
   addSite({ commit }, url = '') {
     log.info('add site');
     return new Promise(async (resolve, reject) => {
-      const executablePath = await browser();
+      const browserConfig = await browser();
 
-      log.info(`trying to launch browser with executable path: ${executablePath}`);
+      log.info(`trying to launch browser with executable path: ${browserConfig.executablePath}`);
 
-      puppeteer.launch({
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-        headless: true,
-        executablePath,
-      }).then(async (browser) => {
+      puppeteer.launch(browserConfig).then(async (browser) => {
         log.info('creating browser instance');
 
         const page = await browser.newPage();
