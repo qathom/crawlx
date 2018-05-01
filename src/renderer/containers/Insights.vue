@@ -71,7 +71,8 @@ export default {
             callbacks: {
               label: (tooltipItem, data) => {
                 const label = data.datasets[tooltipItem.datasetIndex].label || '';
-                const currency = data.datasets[tooltipItem.datasetIndex].currencies;
+                const currency = data.datasets[tooltipItem.datasetIndex]
+                  .currencies[tooltipItem.index];
 
                 return `${label}: ${tooltipItem.yLabel} ${currency}`;
               },
@@ -103,9 +104,9 @@ export default {
         labels,
         datasets: [
           {
+            currencies,
             label: selectedOption.text,
             data,
-            currencies,
             backgroundColor: '#0984e3',
           },
         ],
