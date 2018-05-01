@@ -55,6 +55,7 @@
         :options="countryOptions">
       </b-form-checkbox-group>
     </b-form-group>
+    <small><a href="#" @click.prevent="selectAllCountries">Select all</a></small>
     <div class="text-danger" v-show="selectedCountries.length === 0">Select at least one country.</div>
 
     <b-button
@@ -110,6 +111,9 @@ export default {
     ]),
     isWorking() {
       return this.$parent.getJobInProgress();
+    },
+    selectAllCountries() {
+      this.selectedCountries = this.sites.map(site => site.isoCountry);
     },
     startScan() {
       this.results = [];
