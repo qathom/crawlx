@@ -36,15 +36,9 @@ export default async function (url = '', productSearch = '') {
       detailPage: false,
     };
 
-    const executablePath = await browser();
+    const browserConfig = await browser();
 
-    puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      headless: true,
-      timeout: 60000,
-      slowMo: 100,
-      executablePath,
-    }).then(async (browser) => {
+    puppeteer.launch(browserConfig).then(async (browser) => {
       const page = await browser.newPage();
       await page.setViewport({
         width: 1600,
