@@ -7,10 +7,16 @@ export default async function () {
 
   if (localChromiums.length === 0) {
     log.warn('no local chromium found.');
-    return 'usr/bin/chromium';
+    return null;
   }
 
   const { executablePath } = await browserFetcher.revisionInfo(localChromiums[0]);
 
-  return executablePath;
+  return {
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    headless: true,
+    timeout: 60000,
+    slowMo: 100,
+    executablePath,
+  };
 }

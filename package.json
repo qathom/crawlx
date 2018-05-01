@@ -27,6 +27,8 @@
     "directories": {
       "output": "build"
     },
+    "asar": true,
+    "asarUnpack": "node_modules/puppeteer/.local-chromium/**/*",
     "files": [
       "dist/electron/**/*"
     ],
