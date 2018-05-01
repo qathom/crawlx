@@ -140,7 +140,7 @@ export function importRows(rows = []) {
 
     // convert arrays
     arrRules.forEach((rule) => {
-      row[rule] = row[rule].split(ARRAY_SEPARATOR) || [];
+      row[rule] = row[rule] ? row[rule].split(ARRAY_SEPARATOR) : [];
     });
 
     // convert str (excel format) in number
