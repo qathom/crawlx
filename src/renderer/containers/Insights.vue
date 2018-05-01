@@ -67,6 +67,16 @@ export default {
               },
             }],
           },
+          tooltips: {
+            callbacks: {
+              label: (tooltipItem, data) => {
+                const label = data.datasets[tooltipItem.datasetIndex].label || '';
+                const currency = data.datasets[tooltipItem.datasetIndex].currencies;
+
+                return `${label}: ${tooltipItem.yLabel} ${currency}`;
+              },
+            },
+          },
         },
       },
       selectedChartOptions: null,
@@ -85,6 +95,8 @@ export default {
         this.report.map(row => row.scores.overall.score) :
         this.report.map(row => row.price);
 
+      const currencies = this.report.map(row => row.currency);
+
       this.selectedChartOptions = this.chartOptions[selected];
 
       this.chartData = {
@@ -93,6 +105,7 @@ export default {
           {
             label: selectedOption.text,
             data,
+            currencies,
             backgroundColor: '#0984e3',
           },
         ],
