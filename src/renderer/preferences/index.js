@@ -5,7 +5,14 @@ export const storeConfig = {
   defaults: {
     preferences: {
       reseller: 'Amazon',
-      sites: [],
+      // add several sites by default
+      sites: [
+        { url: 'https://amazon.co.uk', hostName: 'amazon.co.uk', isoCountry: 'UK' },
+        { url: 'https://amazon.de', hostName: 'amazon.de', isoCountry: 'DE' },
+        { url: 'https://amazon.fr', hostName: 'amazon.fr', isoCountry: 'FR' },
+        { url: 'https://amazon.es', hostName: 'amazon.es', isoCountry: 'ES' },
+        { url: 'https://amazon.it', hostName: 'amazon.it', isoCountry: 'IT' },
+      ],
       expandSideBar: true,
       showScanLabel: true,
     },
