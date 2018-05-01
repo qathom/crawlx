@@ -209,7 +209,6 @@ export default {
         this.progress = this.progress + 1;
         decrement -= 1;
         if (decrement === 0) {
-          console.log('stop');
           clearInterval(this.progressTick);
           this.progressTick = null;
         }
