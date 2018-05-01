@@ -27,7 +27,7 @@ export function getISOCountry(country, domainExtension = false) {
   const countryName = country.trim().toUpperCase();
 
   if (domainExtension) {
-    const withDot = countryName.indexOf('.');
+    const withDot = countryName.lastIndexOf('.');
 
     if (withDot > -1) {
       return countryName.substring(withDot + 1, countryName.length);
