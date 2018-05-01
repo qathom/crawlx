@@ -1,12 +1,10 @@
 <template>
   <div>
     <!-- Amazon sites -->
-    <label for="inputUrl">Amazon sites:</label>
-
-    <div class="px-3">
-      <b-alert variant="warning" show v-show="sites.length === 0">No sites.</b-alert>
-
-      <b-form class="bg-light">
+    <b-form @submit.prevent="addAmazonSite">
+      <label for="inputUrl">Amazon sites:</label>
+      <div class="px-3">
+        <b-alert variant="warning" show v-show="sites.length === 0">No sites.</b-alert>
         <b-input-group>
           <b-form-input id="inputUrl"
                         type="text"
@@ -17,28 +15,28 @@
                         placeholder="amazon.com"
                         :disabled="form.checking">
           </b-form-input>
-
+        
           <b-input-group-append>
-            <b-button variant="primary" @click="addAmazonSite" :disabled="form.checking || form.siteExists">
-              Add
-              <vue-simple-spinner v-if="form.checking" class="d-inline-block align-middle"></vue-simple-spinner>
+            <b-button variant="primary" type="submit" :disabled="form.checking || form.siteExists">
+              <span v-show="!form.checking">Add</span>
+              <vue-simple-spinner v-if="form.checking" :size="22" class="d-inline-block align-middle"></vue-simple-spinner>
             </b-button>
           </b-input-group-append>
         </b-input-group>
-      </b-form>
+      </div>
+    </b-form>
 
-      <b-list-group class="mt-3">
-        <b-list-group-item class="d-flex justify-content-between align-items-center" v-for="(site, index) in sites" :key="index">
-          <div>
-            <span v-text="site.hostName"></span>
-            <b-badge variant="primary" pill v-text="site.isoCountry"></b-badge>
-          </div>
-          <b-button class="d-inline-block float-right" variant="danger" size="sm" @click.prevent="removeSite(site.url)">
-            <icon name="trash" class="sm" />
-          </b-button>
-        </b-list-group-item>
-      </b-list-group>
-    </div>
+    <b-list-group class="mt-3 px-3">
+      <b-list-group-item class="d-flex justify-content-between align-items-center" v-for="(site, index) in sites" :key="index">
+        <div>
+          <span v-text="site.hostName"></span>
+          <b-badge variant="primary" pill v-text="site.isoCountry"></b-badge>
+        </div>
+        <b-button class="d-inline-block float-right" variant="danger" size="sm" @click.prevent="removeSite(site.url)">
+          <icon name="trash" class="sm" />
+        </b-button>
+      </b-list-group-item>
+    </b-list-group>
 
     <!-- Buy box -->
     <b-form class="mt-4">
