@@ -108,7 +108,7 @@ export default async function (url = '', productSearch = '') {
 
       const elAplusPage = await page.$('#aplus');
 
-      const elDateFirstAvailable = await page.$('tr.date-first-available td:last-child');
+      const elDateFirstAvailable = await page.$('tr.date-first-available .value');
 
       let price = -1;
 
