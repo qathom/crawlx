@@ -8,10 +8,12 @@ import browser from '@/browser';
 /* eslint no-restricted-syntax: 0 */
 /* eslint no-await-in-loop: 0 */
 /* eslint no-console: 0 */
+/* eslint prefer-destructuring: 0 */
 export default async function (url = '', productSearch = '') {
   return new Promise(async (resolve, reject) => {
     const res = {
       id: productSearch,
+      asin: '',
       title: '',
       price: -1,
       currency: null,
@@ -90,6 +92,10 @@ export default async function (url = '', productSearch = '') {
 
       // product page
       res.link = page.url();
+
+      // asin
+      const matchAsin = res.link.match(/\/dp\/([a-zA-Z0-9]*)\/?/);
+      res.asin = matchAsin[1];
 
       const elPrice = await page.$('#priceblock_ourprice');
       const elDealPrice = await page.$('#priceblock_dealprice');
@@ -262,10 +268,12 @@ export default async function (url = '', productSearch = '') {
 
       await page.reload({ waitUntil: ['networkidle2'] });
 
-      await Promise.all([
-        page.click('#olp_feature_div a'),
-        page.waitForNavigation(),
-      ]);
+      /*
+       * merchant info: the link (#olp_feature_div a) is not always available
+       */
+      await page.goto(`https://www.amazon.fr/gp/offer-listing/${res.asin}/`, {
+        waitUntil: ['networkidle2'],
+      });
 
       // get first seller (owner of the buy box)
       const elSellerPrice = await page.$('#olpOfferList .olpPriceColumn span');
