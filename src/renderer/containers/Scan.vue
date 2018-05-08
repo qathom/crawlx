@@ -63,7 +63,9 @@
       variant="primary"
       size="lg"
       :disabled="productIdentifiers.length === 0 || isWorking() || selectedCountries.length === 0"
-      @click="startScan">
+      @click="startScan"
+      v-b-tooltip.hover
+      :title="`Estimated time: ${estimatedTime}m`">
         <span class="align-middle">{{ isWorking() ? 'Scanning' : 'Scan Now' }}</span>
         <span class="align-middle" v-show="isWorking()" v-text="`${progress}%`"></span>
         <vue-simple-spinner v-if="isWorking()" class="d-inline-block align-middle"></vue-simple-spinner>
@@ -102,6 +104,7 @@ export default {
       results: [],
       progress: 0,
       progressTick: null,
+      scrappingAverageTime: 28, // per product and site
     };
   },
   methods: {
@@ -193,8 +196,7 @@ export default {
     },
     animateProgress(maxPercent, stop = false) {
       let decrement = maxPercent - 1;
-      const averageTime = 28; // per product and site to scrap data
-      const animationTime = (averageTime / maxPercent) * 1000;
+      const animationTime = (this.scrappingAverageTime / maxPercent) * 1000;
 
       if (this.progressTick) {
         clearInterval(this.progressTick);
@@ -225,6 +227,11 @@ export default {
     ]),
     countryOptions() {
       return this.sites.map(site => site.isoCountry);
+    },
+    estimatedTime() {
+      const seconds = (this.productIdentifiers.length * this.selectedCountries.length)
+        * this.scrappingAverageTime;
+      return Math.round(seconds / 60);
     },
   },
   components: {
