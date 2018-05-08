@@ -271,7 +271,7 @@ export default async function (url = '', productSearch = '') {
       /*
        * merchant info: the link (#olp_feature_div a) is not always available
        */
-      await page.goto(`${url}/gp/offer-listing/${res.asin}/ref=sr_1_1_olp?condition=new`, {
+      await page.goto(`${url}/gp/offer-listing/${res.asin}/ref=olp_f_new?ie=UTF8&f_new=true`, {
         waitUntil: ['networkidle2'],
       });
 
