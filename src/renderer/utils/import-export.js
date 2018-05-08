@@ -2,6 +2,7 @@
 
 const rules = {
   id: String,
+  asin: String,
   title: String,
   price: Number,
   currency: String,
