@@ -34,6 +34,7 @@ export default async function (url = '', productSearch = '') {
       videos: 0,
       bulletPoints: [],
       detailPage: false,
+      dateFirstAvailable: '',
     };
 
     const browserConfig = await browser();
@@ -107,6 +108,8 @@ export default async function (url = '', productSearch = '') {
 
       const elAplusPage = await page.$('#aplus');
 
+      const elDateFirstAvailable = await page.$('tr.date-first-available td:last-child');
+
       let price = -1;
 
       if (elPrice) {
@@ -146,6 +149,9 @@ export default async function (url = '', productSearch = '') {
       if (elBestSeller || elBestSellerAmazon) {
         bestSeller = true;
       }
+
+      const dateFirstAvailable = await page.evaluate(el =>
+        el.innerHTML, await elDateFirstAvailable.asElement());
 
       const rankings = [];
 
@@ -252,6 +258,7 @@ export default async function (url = '', productSearch = '') {
       res.images = totalImages;
       res.videos = totalVideos;
       res.detailPage = elAplusPage !== null;
+      res.dateFirstAvailable = dateFirstAvailable;
 
       await page.reload({ waitUntil: ['networkidle2'] });
 

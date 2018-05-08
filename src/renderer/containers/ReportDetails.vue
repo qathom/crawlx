@@ -16,10 +16,18 @@
         </b-row>
         <b-row class="mb-4">
           <b-col sm="3">
-            <b>Date</b>
+            <b>Scrapping Date</b>
           </b-col>
           <b-col>
             {{ getDate(item.date) }}
+          </b-col>
+        </b-row>
+        <b-row class="mb-4">
+          <b-col sm="3">
+            <b>Date First Available</b>
+          </b-col>
+          <b-col>
+            {{ item.dateFirstAvailable }}
           </b-col>
         </b-row>
         <b-row class="mb-4">

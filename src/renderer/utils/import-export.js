@@ -24,6 +24,7 @@ const rules = {
   videos: Number,
   bulletPoints: Array,
   detailPage: Boolean,
+  dateFirstAvailable: String,
 };
 
 const ARRAY_SEPARATOR = '//';
