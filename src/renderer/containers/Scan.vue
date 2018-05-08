@@ -65,7 +65,7 @@
       :disabled="productIdentifiers.length === 0 || isWorking() || selectedCountries.length === 0"
       @click="startScan"
       v-b-tooltip.hover
-      :title="`Estimated time: ${estimatedTime}m`">
+      :title="`Estimated time: ~ ${estimatedTime} ${estimatedTime > 1 ? 'minutes' : 'minute'}`">
         <span class="align-middle">{{ isWorking() ? 'Scanning' : 'Scan Now' }}</span>
         <span class="align-middle" v-show="isWorking()" v-text="`${progress}%`"></span>
         <vue-simple-spinner v-if="isWorking()" class="d-inline-block align-middle"></vue-simple-spinner>
@@ -231,7 +231,7 @@ export default {
     estimatedTime() {
       const seconds = (this.productIdentifiers.length * this.selectedCountries.length)
         * this.scrappingAverageTime;
-      return Math.round(seconds / 60);
+      return Math.round((seconds / 60) + 1);
     },
   },
   components: {
