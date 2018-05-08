@@ -32,6 +32,14 @@
         </b-row>
         <b-row class="mb-4">
           <b-col sm="3">
+            <b>ASIN</b>
+          </b-col>
+          <b-col>
+            {{ item.asin }}
+          </b-col>
+        </b-row>
+        <b-row class="mb-4">
+          <b-col sm="3">
             <b>Site</b>
           </b-col>
           <b-col v-if="item">
