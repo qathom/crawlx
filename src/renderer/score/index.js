@@ -1,3 +1,20 @@
+const pointsPerItem = {
+  title: { max: 2, average: 1 },
+  bulletPoints: { max: 2, average: 1 },
+  rating: { max: 2, average: 1 },
+  images: { max: 1, average: 0 },
+  videos: { max: 1, average: 0 },
+  rankings: { max: 2, average: 1 },
+  aPlusPage: { max: 2, average: 1 },
+  bestSeller: { max: 2, average: 1 },
+  reviews: { max: 2, average: 1 },
+  lostBuyBox: { max: 2, average: 1 },
+  replies: { max: 2, average: 1 },
+};
+
+export const MAX_SCORE = Object.keys(pointsPerItem)
+  .reduce((total, item) => total + pointsPerItem[item].max, 0);
+
 export function getScoreForTitle(item = {}) {
   const itemTitle = item.title;
   const strLength = itemTitle.length;
@@ -99,16 +116,20 @@ export function getScores(item = {}) {
   let points = 0;
 
   Object.keys(scores).forEach((key) => {
+    if (typeof pointsPerItem[key] === 'undefined') {
+      throw new Error(`Score calculation: key ${key} does not exist`);
+    }
+
     if (scores[key] === 'success') {
-      points += 2;
+      points += pointsPerItem[key].max;
     } else if (scores[key] === 'warning') {
-      points += 1;
+      points += pointsPerItem[key].average;
     }
   });
 
   scores.overall = {
     score: points,
-    total: Object.keys(scores).length * 2,
+    total: MAX_SCORE,
   };
 
   return scores;
