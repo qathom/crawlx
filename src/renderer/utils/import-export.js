@@ -65,7 +65,7 @@ export function checkRows(rows = []) {
         return false;
       }
 
-      if (row[rule].constructor !== rules[rule]) {
+      if (row[rule] !== null && row[rule].constructor !== rules[rule]) {
         console.error(`rule ${rule} is type of ${row[rule].constructor} instead of ${rules[rule]}`);
         isValid = false;
         return false;

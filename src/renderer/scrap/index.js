@@ -13,10 +13,10 @@ export default async function (url = '', productSearch = '') {
   return new Promise(async (resolve, reject) => {
     const res = {
       id: productSearch,
-      asin: '',
+      asin: null,
       title: '',
       price: -1,
-      currency: null,
+      currency: '',
       rating: -1,
       rankings: [],
       date: moment().toISOString(),
@@ -31,12 +31,12 @@ export default async function (url = '', productSearch = '') {
         details: '',
       },
       site: getHostName(url),
-      link: null,
+      link: '',
       images: 0,
       videos: 0,
       bulletPoints: [],
       detailPage: false,
-      dateFirstAvailable: '',
+      dateFirstAvailable: null,
     };
 
     const browserConfig = await browser();
@@ -156,10 +156,8 @@ export default async function (url = '', productSearch = '') {
         bestSeller = true;
       }
 
-      let dateFirstAvailable = '';
-
       if (elDateFirstAvailable) {
-        dateFirstAvailable = await page
+        res.dateFirstAvailable = await page
           .evaluate(el => el.innerHTML, await elDateFirstAvailable.asElement());
       }
 
@@ -268,7 +266,6 @@ export default async function (url = '', productSearch = '') {
       res.images = totalImages;
       res.videos = totalVideos;
       res.detailPage = elAplusPage !== null;
-      res.dateFirstAvailable = dateFirstAvailable;
 
       await page.reload({ waitUntil: ['networkidle2'] });
 
