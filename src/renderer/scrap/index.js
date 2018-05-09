@@ -159,8 +159,8 @@ export default async function (url = '', productSearch = '') {
       let dateFirstAvailable = '';
 
       if (elDateFirstAvailable) {
-        dateFirstAvailable = await page.evaluate(
-          el => el.innerHTML, await elDateFirstAvailable.asElement());
+        dateFirstAvailable = await page
+          .evaluate(el => el.innerHTML, await elDateFirstAvailable.asElement());
       }
 
       const rankings = [];
