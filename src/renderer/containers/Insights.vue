@@ -45,6 +45,7 @@
 import ScoreChart from '@/components/ScoreChart';
 import { mapGetters } from 'vuex';
 import { getISOCountry } from '@/utils';
+import { MAX_SCORE } from '@/score';
 
 export default {
   data() {
@@ -74,7 +75,7 @@ export default {
               display: true,
               ticks: {
                 min: 0,
-                max: 24,
+                max: MAX_SCORE,
                 beginAtZero: true,
               },
             }],
@@ -88,7 +89,6 @@ export default {
           tooltips: {
             callbacks: {
               title: (tooltipItem, data) => {
-                console.log(this.compareChartsByRow);
                 if (this.compareChartsByRow !== 0) {
                   return '';
                 }
@@ -168,7 +168,7 @@ export default {
       const chartOptions = this.chartOptions[selected];
 
       if (selected === 'price') {
-        chartOptions.scales.yAxes[0].ticks.max = this.highestPrice;
+        chartOptions.scales.yAxes[0].ticks.suggestedMax = this.highestPrice;
       }
 
       this.selectedChartOptions = chartOptions;
