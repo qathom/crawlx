@@ -24,14 +24,6 @@
         </b-row>
         <b-row class="mb-4">
           <b-col sm="3">
-            <b>Date First Available</b>
-          </b-col>
-          <b-col>
-            {{ item.dateFirstAvailable }}
-          </b-col>
-        </b-row>
-        <b-row class="mb-4">
-          <b-col sm="3">
             <b>ASIN</b>
           </b-col>
           <b-col>
@@ -199,6 +191,15 @@
           </b-col>
           <b-col>
             {{ item.replies }} replies
+          </b-col>
+        </b-row>
+        <b-row class="mb-4">
+          <b-col sm="3">
+            <b>Date First Available</b>
+          </b-col>
+          <b-col>
+            <div v-show="item.dateFirstAvailable === null">Unknown</div>
+            {{ item.dateFirstAvailable }}
           </b-col>
         </b-row>
       </b-list-group-item>
