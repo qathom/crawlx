@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/qathom/crawlx/blob/master/build/icons/256x256.png?raw=true" alt="crawlx logo">
+  <img width="120" height="120" src="https://raw.githubusercontent.com/qathom/crawlx/master/src/renderer/assets/icons/icon.svg" alt="crawlx logo">
 </p>
 
 > Analyze product data on Amazon
