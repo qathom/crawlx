@@ -28,6 +28,7 @@
       head-variant="light"
       :items="report"
       :fields="fields"
+      :sort-compare="sortCompare"
       v-show="report.length > 0">
       <template slot="title" slot-scope="data">
         <a v-b-tooltip.hover :title="data.item.title" :href="data.item.link" @click.prevent="openLink(data.item.link)" v-text="getShortTitle(data.item.title)"></a>
@@ -57,6 +58,7 @@
 import { mapGetters, mapActions } from 'vuex';
 import { importRows, exportRows, checkRows } from '@/utils/import-export';
 import XLSX from 'xlsx';
+import { keys } from 'bootstrap-vue/src/utils/object';
 const { dialog } = require('electron').remote;
 
 export default {
@@ -103,12 +105,32 @@ export default {
     ...mapActions([
       'setReport',
     ]),
-    sortReport(a, b, sortBy) {
+    toString(v) {
+      if (!v) {
+        return '';
+      }
+      if (v instanceof Object) {
+        return keys(v)
+          .map(k => toString(v[k]))
+          .join(' ');
+      }
+      return String(v);
+    },
+    sortCompare(a, b, sortBy) {
+      if (sortBy === 'score') {
+        return (a.scores.overall.score < b.scores.overall.score && -1)
+          || (a.scores.overall.score > b.scores.overall.score && 1) || 0;
+      }
+
       if (typeof a[sortBy] === 'number' && typeof b[sortBy] === 'number') {
         return (a[sortBy] < b[sortBy] && -1) || (a[sortBy] > b[sortBy] && 1) || 0;
       }
 
-      return toString(a[sortBy]).localeCompare(toString(b[sortBy]), undefined, {
+      if (typeof a[sortBy] === 'boolean' && typeof b[sortBy] === 'boolean') {
+        return (a[sortBy] < b[sortBy] && -1) || (a[sortBy] > b[sortBy] && 1) || 0;
+      }
+
+      return this.toString(a[sortBy]).localeCompare(this.toString(b[sortBy]), undefined, {
         numeric: true,
       });
     },
