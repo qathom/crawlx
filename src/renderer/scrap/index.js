@@ -100,6 +100,7 @@ export default async function (url = '', productSearch = '') {
       const elPrice = await page.$('#priceblock_ourprice');
       const elDealPrice = await page.$('#priceblock_dealprice');
       const elSalePrice = await page.$('#priceblock_saleprice');
+      const elOlpNewPrice = await page.$('#olp_feature_div .olp-padding-right:first-child .a-color-price');
 
       const elRatingTrigger = await page.$('#acrPopover');
       const elRankings = await page.$$('.zg_hrsr .zg_hrsr_item');
@@ -116,18 +117,22 @@ export default async function (url = '', productSearch = '') {
 
       const elDateFirstAvailable = await page.$('tr.date-first-available .value');
 
-      let price = -1;
+      let price = null;
 
       if (elPrice) {
         price = await page.evaluate(el => el.innerHTML, await elPrice.asElement());
       }
 
-      if (elDealPrice) {
+      if (price === -1 && elDealPrice) {
         price = await page.evaluate(el => el.innerHTML, await elDealPrice.asElement());
       }
 
-      if (elSalePrice) {
+      if (price === -1 && elSalePrice) {
         price = await page.evaluate(el => el.innerHTML, await elSalePrice.asElement());
+      }
+
+      if (price === -1 && elOlpNewPrice) {
+        price = await page.evaluate(el => el.innerHTML, await elOlpNewPrice.asElement());
       }
 
       // rating
