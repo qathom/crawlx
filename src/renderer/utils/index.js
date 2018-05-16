@@ -53,18 +53,24 @@ export function parsePrice(price = '') {
   }
 
   if (typeof price !== 'string') {
-    return 0;
+    return -1;
   }
 
-  return parseFloat(price.trim()
-    .replace('€', '')
-    .replace('EUR', '')
-    .replace('£', '')
-    .replace('GBP', '')
-    .replace(',', '.'));
+  /* eslint arrow-body-style: 0 */
+  const cleanPrice = Object.keys(currencies).reduce((current, currency) => {
+    return current
+      .replace(currency, '')
+      .replace(currencies[currency], '');
+  }, price);
+
+  return parseFloat(cleanPrice.trim().replace(',', '.'));
 }
 
 export function getCurrency(price = '') {
+  if (typeof price !== 'string') {
+    return '';
+  }
+
   return Object.keys(currencies)
     .find(name => price.indexOf(name) > -1 || price.indexOf(currencies[name]) > -1);
 }
