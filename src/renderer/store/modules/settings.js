@@ -2,7 +2,7 @@ import { getISOCountry, getHostName } from '@/utils';
 import { storeConfig, setPreference, getPreference } from '@/preferences';
 import puppeteer from 'puppeteer';
 import log from 'electron-log';
-import browser from '@/browser';
+import browserConfig from '@/browser';
 
 const state = {};
 const getters = {};
@@ -46,7 +46,10 @@ const actions = {
   addSite({ commit }, url = '') {
     log.info('add site');
     return new Promise(async (resolve, reject) => {
-      const browserConfig = await browser();
+      if (browserConfig === null) {
+        reject(new Error('Unknown executable path to launch the browser'));
+        return;
+      }
 
       log.info(`trying to launch browser with executable path: ${browserConfig.executablePath}`);
 

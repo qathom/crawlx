@@ -2,7 +2,7 @@ import { parsePrice, getCurrency, getHostName } from '@/utils';
 import { getPreference } from '@/preferences';
 import puppeteer from 'puppeteer';
 import moment from 'moment';
-import browser from '@/browser';
+import browserConfig from '@/browser';
 
 /* eslint import/prefer-default-export: 0 */
 /* eslint no-restricted-syntax: 0 */
@@ -38,8 +38,6 @@ export default async function (url = '', productSearch = '') {
       detailPage: false,
       dateFirstAvailable: null,
     };
-
-    const browserConfig = await browser();
 
     puppeteer.launch(browserConfig).then(async (browser) => {
       const page = await browser.newPage();
