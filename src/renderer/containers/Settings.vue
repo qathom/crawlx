@@ -103,12 +103,10 @@ export default {
         this.form.checking = false;
         this.form.url = '';
       }).catch((error) => {
-        /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-        console.error(error);
         this.form.checking = false;
         this.form.urlValid = false;
 
-        log.error(`Error while adding a site: ${error.type}:${error.name}. Line: ${error.lineno}. Message: ${error.message}. Stack: ${error.stack}`);
+        log.error(`Error while adding a site: ${error.message}`);
       });
     },
   },
