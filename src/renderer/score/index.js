@@ -40,7 +40,8 @@ export function getScoreForBulletPoint(text = '') {
 
 export function getScoreForRating(item = {}) {
   const round = Math.round(item.rating);
-  if (round === 1 || round === 2) {
+  // the rating can be -1 if it the product is new
+  if (round < 1 || round === 1 || round === 2) {
     return 'danger';
   }
 
