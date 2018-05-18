@@ -279,62 +279,66 @@ export default async function (url = '', productSearch = '') {
         waitUntil: ['networkidle2'],
       });
 
-      // get first seller (owner of the buy box)
-      const elSellerPrice = await page.$('#olpOfferList .olpPriceColumn span');
-      const elSeller = await page.$('#olpOfferList .olpSellerColumn');
-      const elAmazonAsSeller = await elSeller.$('img');
-
-      let lostBuyBox = true;
-      const buyBoxSeller = {};
+      // the product can be unavailable, so no sellers can be possible
+      res.lostBuyBox = false;
       let sellerName = '';
       let sellerLink = '';
-      const sellerPrice = await page.evaluate(el => el.innerHTML, await elSellerPrice.asElement());
+      let sellerPrice = '';
       const details = [];
 
-      // if there is an image, it is Amazon
-      // no details link
-      if (elAmazonAsSeller) {
-        sellerName = 'Amazon';
-        sellerLink = url;
-        details.push(url);
-      }
+      // get first seller (owner of the buy box)
+      const elSellerPrice = await page.$('#olpOfferList .olpPriceColumn span');
 
-      if (sellerName === getPreference('reseller')) {
-        lostBuyBox = false;
-      }
+      if (elSellerPrice) {
+        const elSeller = await page.$('#olpOfferList .olpSellerColumn');
+        const elAmazonAsSeller = await elSeller.$('img');
 
-      // if there is not an image, it is another reseller
-      if (!elAmazonAsSeller) {
-        const elSellerLink = await elSeller.$('.olpSellerName a');
+        sellerPrice = await page.evaluate(el => el.innerHTML, await elSellerPrice.asElement());
 
-        if (elSellerLink) {
-          sellerName = await page.evaluate(el => el.innerHTML, await elSellerLink.asElement());
-          sellerLink = url + await page.evaluate(el => el.getAttribute('href'), await elSellerLink.asElement());
+        // if there is an image, it is Amazon
+        // no details link
+        if (elAmazonAsSeller) {
+          sellerName = 'Amazon';
+          sellerLink = url;
+          details.push(url);
         }
 
-        // get detailed seller information
-        await Promise.all([
-          page.click('#olpOfferList .olpSellerColumn .olpSellerName a'),
-          page.waitForNavigation(),
-        ]);
+        if (sellerName !== getPreference('reseller')) {
+          res.lostBuyBox = true;
+        }
 
-        // address
-        const elSellerFullAddress = await page.$$('#seller-profile-container ul.a-unordered-list ul .a-list-item');
+        // if there is not an image, it is another reseller
+        if (!elAmazonAsSeller) {
+          const elSellerLink = await elSeller.$('.olpSellerName a');
 
-        for (const elInfo of elSellerFullAddress) {
-          const info = await page.evaluate(el => el.innerHTML, await elInfo.asElement());
-          details.push(info);
+          if (elSellerLink) {
+            sellerName = await page.evaluate(el => el.innerHTML, await elSellerLink.asElement());
+            sellerLink = url + await page.evaluate(el => el.getAttribute('href'), await elSellerLink.asElement());
+          }
+
+          // get detailed seller information
+          await Promise.all([
+            page.click('#olpOfferList .olpSellerColumn .olpSellerName a'),
+            page.waitForNavigation(),
+          ]);
+
+          // address
+          const elSellerFullAddress = await page.$$('#seller-profile-container ul.a-unordered-list ul .a-list-item');
+
+          for (const elInfo of elSellerFullAddress) {
+            const info = await page.evaluate(el => el.innerHTML, await elInfo.asElement());
+            details.push(info);
+          }
         }
       }
 
       // add lost buy box data
-      buyBoxSeller.name = sellerName.trim();
-      buyBoxSeller.link = sellerLink;
-      buyBoxSeller.price = parsePrice(sellerPrice);
-      buyBoxSeller.details = details.toString();
-
-      res.lostBuyBox = lostBuyBox;
-      res.buyBoxSeller = buyBoxSeller;
+      res.buyBoxSeller = {
+        name: sellerName.trim(),
+        link: sellerLink,
+        price: parsePrice(sellerPrice),
+        details: details.toString(),
+      };
 
       await browser.close();
 
