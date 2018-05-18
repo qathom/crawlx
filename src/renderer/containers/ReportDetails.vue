@@ -56,7 +56,7 @@
         </b-row>
         <b-row class="mb-4">
           <b-col sm="3">
-            <b>Price</b>
+            <b>Price/Buy box</b>
             <icon-check :status="item.scores.lostBuyBox" />
           </b-col>
           <b-col>
@@ -67,19 +67,24 @@
                 <icon class="sm" name="info" />
               </b-btn>
 
-              <div v-show="item.lostBuyBox === false">
-                <a :href="item.buyBoxSeller.link" @click.prevent="openLink(item.buyBoxSeller.link)" v-text="item.buyBoxSeller.name"></a>
-                has the best price suggestion for this product ({{ `${item.buyBoxSeller.price} ${item.currency}` }}).
+              <div v-if="item.buyBoxSeller.name === ''">
+                <b>No vendor yet</b>
               </div>
-              <div v-show="item.lostBuyBox === true">
-                You lost the buy box!
-                <a :href="item.buyBoxSeller.link" @click.prevent="openLink(item.buyBoxSeller.link)" v-text="item.buyBoxSeller.name"></a>
-                has a better price than {{ reseller }}.
-                <div><b>({{ `${item.buyBoxSeller.price} ${item.currency}` }})</b></div>
+              <div v-else>
+                <div v-show="item.lostBuyBox === false">
+                  <a :href="item.buyBoxSeller.link" @click.prevent="openLink(item.buyBoxSeller.link)" v-text="item.buyBoxSeller.name"></a>
+                  has the best price suggestion for this product ({{ `${item.buyBoxSeller.price} ${item.currency}` }}).
+                </div>
+                <div v-show="item.lostBuyBox === true">
+                  You lost the buy box!
+                  <a :href="item.buyBoxSeller.link" @click.prevent="openLink(item.buyBoxSeller.link)" v-text="item.buyBoxSeller.name"></a>
+                  has a better price than {{ reseller }}.
+                  <div><b>({{ `${item.buyBoxSeller.price} ${item.currency}` }})</b></div>
 
-                <hr />
-                <div><b>Address:</b></div>
-                <div v-for="(detail, index) in item.buyBoxSeller.details.split(',')" :key="index" v-text="detail"></div>
+                  <hr />
+                  <div><b>Address:</b></div>
+                  <div v-for="(detail, index) in item.buyBoxSeller.details.split(',')" :key="index" v-text="detail"></div>
+                </div>
               </div>
             </div>
           </b-col>
@@ -126,6 +131,9 @@
             <icon-check :status="item.scores.rating" />
           </b-col>
           <b-col>
+            <div v-show="item.rating === -1">
+              No rating
+            </div>
             <div v-show="Math.round(item.rating) === 1 || Math.round(item.rating) === 2">
               {{ item.rating }}/5 is bad.
             </div>
@@ -143,7 +151,7 @@
             <icon-check :status="item.scores.rankings" />
           </b-col>
           <b-col>
-            <div v-show="item.rankings.length === 0">No rankings.</div>
+            <div v-show="item.rankings.length === 0">No ranking.</div>
             <div v-for="(ranking, index) in item.rankings" :key="index" v-text="ranking"></div>
           </b-col>
         </b-row>
