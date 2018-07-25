@@ -5,6 +5,7 @@ const rules = {
   asin: String,
   title: String,
   price: Number,
+  ownerPrice: Number,
   currency: String,
   rating: Number,
   rankings: Array,

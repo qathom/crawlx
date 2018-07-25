@@ -15,7 +15,7 @@ export default async function (url = '', productSearch = '') {
       id: productSearch,
       asin: null,
       title: '',
-      price: -1,
+      ownerPrice: -1,
       currency: '',
       rating: -1,
       rankings: [],
@@ -98,7 +98,7 @@ export default async function (url = '', productSearch = '') {
       const elPrice = await page.$('#priceblock_ourprice');
       const elDealPrice = await page.$('#priceblock_dealprice');
       const elSalePrice = await page.$('#priceblock_saleprice');
-      const elOlpNewPrice = await page.$('#olp_feature_div .olp-padding-right:first-child .a-color-price');
+      const elOlpNewPrice = await page.$('#olp_feature_div .olp-padding-right .a-color-price');
 
       const elRatingTrigger = await page.$('#acrPopover');
       const elRankings = await page.$$('.zg_hrsr .zg_hrsr_item');
@@ -121,17 +121,20 @@ export default async function (url = '', productSearch = '') {
         price = await page.evaluate(el => el.innerHTML, await elPrice.asElement());
       }
 
-      if (price === -1 && elDealPrice) {
+      if (!price && elDealPrice) {
         price = await page.evaluate(el => el.innerHTML, await elDealPrice.asElement());
       }
 
-      if (price === -1 && elSalePrice) {
+      if (!price && elSalePrice) {
         price = await page.evaluate(el => el.innerHTML, await elSalePrice.asElement());
       }
 
-      if (price === -1 && elOlpNewPrice) {
+      if (!price && elOlpNewPrice) {
         price = await page.evaluate(el => el.innerHTML, await elOlpNewPrice.asElement());
       }
+
+      res.price = parsePrice(price);
+      res.currency = getCurrency(price);
 
       // rating
       let rating = -1;
@@ -257,9 +260,6 @@ export default async function (url = '', productSearch = '') {
         totalVideos = await page.$$eval('#vse-ib-rv ol li.a-carousel-card', videos => videos.length);
       }
 
-      // add data
-      res.price = parsePrice(price);
-      res.currency = getCurrency(price);
       res.rating = rating;
       res.rankings = rankings;
       res.bestSeller = bestSeller;
@@ -270,16 +270,18 @@ export default async function (url = '', productSearch = '') {
       res.videos = totalVideos;
       res.detailPage = elAplusPage !== null;
 
+      const elSoldByInfo = await page.$('#merchant-info');
+      const elSoldBySeller = await page.$('#merchant-info a');
+
       await page.reload({ waitUntil: ['networkidle2'] });
 
       /*
-       * merchant info: the link (#olp_feature_div a) is not always available
+       * seller info: the link (#olp_feature_div a) is not always available
        */
       await page.goto(`${url}/gp/offer-listing/${res.asin}/ref=olp_f_new?ie=UTF8&f_new=true`, {
         waitUntil: ['networkidle2'],
       });
 
-      // the product can be unavailable, so no sellers can be possible
       res.lostBuyBox = false;
       let sellerName = '';
       let sellerLink = '';
@@ -287,13 +289,20 @@ export default async function (url = '', productSearch = '') {
       const details = [];
 
       // get first seller (owner of the buy box)
-      const elSellerPrice = await page.$('#olpOfferList .olpPriceColumn span');
+      // the product can be unavailable
+      const elBuyBoxSeller = await page.$('#olpOfferList .olpPriceColumn span');
 
-      if (elSellerPrice) {
+      if (elBuyBoxSeller) {
         const elSeller = await page.$('#olpOfferList .olpSellerColumn');
         const elAmazonAsSeller = await elSeller.$('img');
+        const elSellerLink = await elSeller.$('.olpSellerName a');
 
-        sellerPrice = await page.evaluate(el => el.innerHTML, await elSellerPrice.asElement());
+        if (elSellerLink) {
+          sellerName = await page.evaluate(el => el.innerHTML, await elSellerLink.asElement());
+          sellerLink = url + await page.evaluate(el => el.getAttribute('href'), await elSellerLink.asElement());
+        }
+
+        sellerPrice = await page.evaluate(el => el.innerHTML, await elBuyBoxSeller.asElement());
 
         // if there is an image, it is Amazon
         // no details link
@@ -302,21 +311,22 @@ export default async function (url = '', productSearch = '') {
           sellerLink = url;
           details.push(url);
         }
-
-        if (sellerName !== getPreference('reseller')) {
-          res.lostBuyBox = true;
+        /*
+         * when Amazon should be the top seller, there is a lost buy box if:
+         * [1] Amazon is not the provider (typical message is "Sold by Amazon" on the product page)
+         * [2] Amazon doesn't sell the product
+         */
+        if (getPreference('reseller').toLowerCase().indexOf('amazon') > -1) {
+          // [1] and [2]
+          if ((elSoldByInfo && elSoldBySeller) && sellerName !== getPreference('reseller')) {
+            res.lostBuyBox = true;
+          }
+        } else {
+          res.lostBuyBox = sellerName !== getPreference('reseller');
         }
 
-        // if there is not an image, it is another reseller
+        // get detailed seller information (only if the best reseller is not Amazon)
         if (!elAmazonAsSeller) {
-          const elSellerLink = await elSeller.$('.olpSellerName a');
-
-          if (elSellerLink) {
-            sellerName = await page.evaluate(el => el.innerHTML, await elSellerLink.asElement());
-            sellerLink = url + await page.evaluate(el => el.getAttribute('href'), await elSellerLink.asElement());
-          }
-
-          // get detailed seller information
           await Promise.all([
             page.click('#olpOfferList .olpSellerColumn .olpSellerName a'),
             page.waitForNavigation(),
@@ -328,6 +338,33 @@ export default async function (url = '', productSearch = '') {
           for (const elInfo of elSellerFullAddress) {
             const info = await page.evaluate(el => el.innerHTML, await elInfo.asElement());
             details.push(info);
+          }
+
+          await page.goBack({ waitUntil: ['networkidle2'] });
+        }
+      }
+
+      // find the product price from the owner
+      const elSellerRows = await page.$$('#olpOfferList .olpOffer');
+      if (elSellerRows) {
+        for (const sellerRow of elSellerRows) {
+          const elSeller = await sellerRow.$('.olpSellerColumn');
+          const elAmazonAsSeller = await elSeller.$('img');
+          const elSellerPrice = await sellerRow.$('.olpPriceColumn span');
+          const elSellerLink = await sellerRow.$('.olpSellerName a');
+
+          let sellerName = '';
+          if (elSellerLink) {
+            sellerName = await page.evaluate(el => el.innerHTML, await elSellerLink.asElement());
+          }
+
+          const sellerPrice = await page
+            .evaluate(el => el.innerHTML, await elSellerPrice.asElement());
+
+          if ((getPreference('reseller').toLowerCase().indexOf('amazon') > -1 && elAmazonAsSeller)
+            || getPreference('reseller').toLowerCase() === sellerName.toLowerCase().trim()) {
+            res.ownerPrice = parsePrice(sellerPrice);
+            break;
           }
         }
       }
