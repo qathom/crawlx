@@ -60,8 +60,6 @@
             <icon-check :status="item.scores.lostBuyBox" />
           </b-col>
           <b-col>
-            {{ item.price }} {{ item.currency }}
-
             <div class="clearfix">
               <b-btn variant="primary" class="float-right icon-info" v-b-tooltip.hover title="Your products may be losing the buy box to third-party sellers because your price to Amazon is too high.">
                 <icon class="sm" name="info" />
@@ -76,12 +74,16 @@
                   has the best price suggestion for this product ({{ `${item.buyBoxSeller.price} ${item.currency}` }}).
                 </div>
                 <div v-show="item.lostBuyBox === true">
-                  You lost the buy box!
-                  <a :href="item.buyBoxSeller.link" @click.prevent="openLink(item.buyBoxSeller.link)" v-text="item.buyBoxSeller.name"></a>
-                  has a better price than {{ reseller }}.
-                  <div><b>({{ `${item.buyBoxSeller.price} ${item.currency}` }})</b></div>
+                  <b>You lost the buy box!</b>
+                  <div>
+                    <a :href="item.buyBoxSeller.link" @click.prevent="openLink(item.buyBoxSeller.link)" v-text="item.buyBoxSeller.name"></a>: {{ `${item.buyBoxSeller.price} ${item.currency}` }}
+                  </div>
+                  <div>
+                    {{ reseller }}: {{ `${item.ownerPrice} ${item.currency}` }}
+                  </div>
 
                   <hr />
+
                   <div><b>Address:</b></div>
                   <div v-for="(detail, index) in item.buyBoxSeller.details.split(',')" :key="index" v-text="detail"></div>
                 </div>
