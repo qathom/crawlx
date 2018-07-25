@@ -104,7 +104,7 @@ export default {
       results: [],
       progress: 0,
       progressTick: null,
-      scrappingAverageTime: 28, // per product and site
+      scrappingAverageTime: 29, // per product and site
     };
   },
   methods: {
