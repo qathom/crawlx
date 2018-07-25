@@ -48,7 +48,7 @@
         <b-form-input id="inputReseller"
                       type="text"
                       :value="reseller"
-                      @input="editReseller"
+                      @input="editInputReseller"
                       required>
         </b-form-input>
       </b-form-group>
@@ -80,6 +80,10 @@ export default {
       'removeSite',
       'editReseller',
     ]),
+    editInputReseller(inputValue) {
+      const value = inputValue.trim();
+      this.editReseller(value);
+    },
     getFullUrl() {
       let fullUrl = '';
 
